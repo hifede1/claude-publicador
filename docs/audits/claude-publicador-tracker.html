@@ -384,7 +384,7 @@
    DATOS — esto es lo único que se edita en una actualización normal.
    ========================================================================== */
 
-const LAST_AUDIT = '2026-07-23';
+const LAST_AUDIT = '2026-07-24';
 const CLOSED_COUNT = 0;              // Auditoría inicial — obra no iniciada, nada cerrado todavía.
 const REPO = 'hifede1/claude-publicador';
 
@@ -481,7 +481,6 @@ const DATA = [
 const DEBT = [
   {t:'Obra no iniciada: el producto es cero código', d:'El repo entero son 3 archivos de docs. Ningún criterio de la ficha tiene obra detrás; el plan completo (S01–S05, issues #1–#5) está por delante. Hasta S01 no hay siquiera algo instalable.', sev:'stop'},
   {t:'batuta le delega gitleaks a un delegado que no existe', d:'<code>decisiones/010</code> de batuta difiere el escaneo de secretos a publicador — verificado en la DEBT de batuta como bloqueo «sin fecha de resolución». Se resuelve recién con S02 (pre-flight). Hasta entonces, el taller no tiene escaneo de secretos automatizado.', sev:'warn'},
-  {t:'Firma de la ficha en formato pre-011', d:'La cabecera dice «decisiones firmadas por Fede el 2026-07-17» — <b>mención de firma, no el acto con la línea exacta de 011</b> (<code>Estado: VIGENTE</code> + <code>Firmado: FECHA por &lt;quién&gt;</code>). Si batuta dirige esta obra, va a FRENAR en la precondición (comportamiento verificado con cartera, fix #38). Trabajo de la mesa de firmas con Fede — junto con los ADR 001–008 de batuta.', sev:'warn'},
   {t:'Nació publicado a mano', d:'El repo se publicó el 2026-07-23 por decisión del dueño en sesión, con scan MANUAL de la historia (limpia: 2 commits, solo docs) — sin su propio pre-flight, porque no existe. S05 (dogfooding) lo re-verifica con el motor real. Deuda honesta, no mina.', sev:'warn'}
 ];
 
@@ -550,6 +549,7 @@ const TESTS = {
 const REFS = [];
 
 const CHANGELOG = [
+  {f:'2026-07-24', t:'🖊️ Mesa de firmas: la FICHA es plano VIGENTE', d:'Re-auditoría tras el <b>PR #7</b> (mergeado por Fede 2026-07-23 23:05 UTC — el segundo acto). La cabecera de <code>docs/FICHA.md</code> lleva ahora la <b>línea EXACTA de 011</b> (<code>Estado: VIGENTE</code> + <code>Firmado: 2026-07-23 por Fede</code>) con Procedencia 018 (re-ratificación en bloque en la mesa de firmas, elección explícita en sesión). <b>La deuda «firma en formato pre-011» sale de DEBT</b> — batuta ya puede dirigir esta obra sin frenar en la precondición. Las 4 decisiones técnicas del §4 quedaron ratificadas.'},
   {f:'2026-07-23', t:'🏁 Auditoría inicial — repo publicado, obra cero, cola despachada', d:'Primera auditoría de <code>claude-publicador</code>, disparada por el worklist de <b>cartera</b> (ítem #1: «sin remoto GitHub, invisible para la flota»). <b>El repo se publicó HOY</b> (decisión del dueño en sesión): scan manual de la historia completa antes de salir — 2 commits, solo docs, limpio. Estado real: <b>plano completo y bueno, obra CERO</b> — la ficha define 3 fases, 4 decisiones técnicas (2 marcadas «firmadas» el 07-17, en formato pre-011 → deuda de mesa de firmas) y 4 criterios de aceptación; el código no existe. Hallazgo estructural: <code>decisiones/010</code> de batuta le delega gitleaks a este producto — el taller entero espera su S02. Plan: <b>S01</b> esqueleto → <b>S02</b> pre-flight → <b>S03</b> GitHub → <b>S04</b> npm/marketplace → <b>S05</b> dogfooding (issues #1–#5, cadena estricta). Calibración heredada del taller: sesiones S/M/L · Fede + esta máquina · directo · <b>modo orquestado</b>.'}
 ];
 
