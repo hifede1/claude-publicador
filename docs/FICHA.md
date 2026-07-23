@@ -1,7 +1,9 @@
 # Ficha de diseño: publicador
 
-> Estado: 🔵 Lista para construir (decisiones firmadas por Fede el 2026-07-17)
-> Diseñada: 2026-07-17 · Próxima sesión de construcción: S01 — Esqueleto
+> **Estado: VIGENTE**
+> Firmado: 2026-07-23 por Fede
+> *Procedencia de la firma (`claude-batuta` · `decisiones/018`): re-ratificación en bloque en la mesa de firmas del 2026-07-23 — elección explícita de Fede en sesión interactiva («En bloque, las 11») tras presentársele las 4 decisiones técnicas de esta ficha con su contenido — acto humano rastreable registrado en la conversación y la memoria del taller. Ratifica esta ficha como plano del proyecto.*
+> Diseñada: 2026-07-17 (decisiones elegidas por Fede ese día; la mención «firmadas» de entonces era pre-011 — el acto de firma es el de hoy) · Próxima sesión de construcción: S01 — Esqueleto ([#1](https://github.com/hifede1/claude-publicador/issues/1))
 
 ## 1. Propósito
 
