@@ -1,0 +1,80 @@
+{
+  "schema_version": "1.0",
+  "proyecto": "claude-publicador",
+  "last_audit": "2026-07-23",
+  "closed_count": 0,
+  "calibracion": {
+    "unidad": "sesiones (~2-4h), talla S/M/L",
+    "actores": "Fede + una máquina (esta)",
+    "metodologia": "directa (heredada del taller)",
+    "loop": "orquestado (despacho activo — cola en Issues #1–#5)"
+  },
+  "bloques": [
+    {
+      "id": "p01",
+      "nombre": "Esqueleto instalable (S01)",
+      "zona": "Cimiento — que exista de verdad",
+      "estado": "pend",
+      "resumen": "El plugin no existe: el repo es ficha + README (3 archivos, verificado). Primero el vehículo.",
+      "pendientes": [
+        {"id": "p-esqueleto", "txt": "Plugin instalable: validate sin warnings + install limpio EXIT 0", "sesion": "S01"}
+      ]
+    },
+    {
+      "id": "p02",
+      "nombre": "Pre-flight de solo lectura (S02)",
+      "zona": "El producto — pre-flight y ejecución",
+      "estado": "pend",
+      "resumen": "Historia completa sin secretos (gitleaks + checks caseros), README/LICENSE, metadata, nombre disponible, scope. UN rojo = no se publica. Sin obra.",
+      "pendientes": [
+        {"id": "p-preflight", "txt": "Pre-flight completo con las corridas de los criterios 1 y 2", "sesion": "S02"}
+      ]
+    },
+    {
+      "id": "p03",
+      "nombre": "Ejecución GitHub (S03)",
+      "zona": "El producto — pre-flight y ejecución",
+      "estado": "pend",
+      "resumen": "Crear repo + push solo con pre-flight verde y firma explícita; verificación post. Sin obra.",
+      "pendientes": [
+        {"id": "p-exec-github", "txt": "Publicación GitHub end-to-end con firma + rama negativa verificada", "sesion": "S03"}
+      ]
+    },
+    {
+      "id": "p04",
+      "nombre": "Ejecución npm + marketplace (S04)",
+      "zona": "El producto — pre-flight y ejecución",
+      "estado": "pend",
+      "resumen": "Las otras dos salidas firmadas (registries v1). Criterios 3 y 4 completos. Sin obra.",
+      "pendientes": [
+        {"id": "p-exec-npm", "txt": "Publicación npm de prueba + marketplace, end-to-end con post-verificación", "sesion": "S04"}
+      ]
+    },
+    {
+      "id": "p05",
+      "nombre": "Dogfooding: publicarse a sí mismo (S05)",
+      "zona": "Cierre — el ciclo completo",
+      "estado": "pend",
+      "resumen": "El repo nació publicado a mano (2026-07-23, decisión del dueño); S05 lo re-verifica con el motor real.",
+      "pendientes": [
+        {"id": "p-dogfood", "txt": "Corrida completa de /publicar sobre este repo con informe verde", "sesion": "S05"}
+      ]
+    }
+  ],
+  "plan": [
+    {"sesion": "S01", "titulo": "Esqueleto: plugin instalable con comando placeholder", "estimacion": 1, "deps": [], "cierra": ["p-esqueleto"]},
+    {"sesion": "S02", "titulo": "Pre-flight: todos los checks de solo lectura + informe", "estimacion": 1, "deps": ["S01"], "cierra": ["p-preflight"]},
+    {"sesion": "S03", "titulo": "Ejecución GitHub: crear repo, push, verificación post", "estimacion": 1, "deps": ["S02"], "cierra": ["p-exec-github"]},
+    {"sesion": "S04", "titulo": "Ejecución npm/marketplace: publish + post-verificación", "estimacion": 1, "deps": ["S03"], "cierra": ["p-exec-npm"]},
+    {"sesion": "S05", "titulo": "Dogfooding final: publicarse a sí mismo", "estimacion": 1, "deps": ["S04"], "cierra": ["p-dogfood"]}
+  ],
+  "decisiones_pendientes": [],
+  "referencias": [],
+  "referencias_faltantes": [],
+  "deuda": [
+    "Obra no iniciada: cero código — el plan entero (S01–S05) por delante",
+    "batuta le delega gitleaks (decisiones/010) y no puede ejecutarlo hasta S02",
+    "Firma de la ficha en formato pre-011 (mención «firmadas 2026-07-17», sin la línea exacta) — mesa de firmas con Fede",
+    "Nació publicado a mano el 2026-07-23 (historia escaneada manualmente, limpia) — S05 lo re-verifica"
+  ]
+}
