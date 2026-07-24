@@ -385,12 +385,12 @@
    ========================================================================== */
 
 const LAST_AUDIT = '2026-07-24';
-const CLOSED_COUNT = 1;              // S01 cerrada y verificada 2026-07-24 (PR #9 + alta audit-tracker#36).
+const CLOSED_COUNT = 2;              // S01 + S02 (pre-flight real, criterios 1 y 2) cerradas y verificadas 2026-07-24.
 const REPO = 'hifede1/claude-publicador';
 
 /* Estimación: talle S / M / L por pendiente (calibración heredada del taller). */
 const EST = {
-  'p-preflight':'L','p-exec-github':'M','p-exec-npm':'L','p-dogfood':'M'
+  'p-exec-github':'M','p-exec-npm':'L','p-dogfood':'M'
 };
 
 const DATA = [
@@ -414,17 +414,15 @@ const DATA = [
     zona: 'El producto — pre-flight y ejecución',
     bloques: [
       {
-        id:'p02', titulo:'Pre-flight de solo lectura (S02)', estado:'pend',
+        id:'p02', titulo:'Pre-flight de solo lectura (S02)', estado:'hecho',
         sesion:'S02', talle:'L', issue:2, trat:'directo',
         planteamiento:'El corazón del producto (FICHA §3, fase 1): historia de git SIN secretos —TODOS los commits, no solo HEAD (la lección de n8n)—, README/LICENSE, metadata, nombre disponible en el registry, cuenta/scope, .gitignore sano. <b>UN check rojo = no se publica nada.</b>',
-        hallazgo:'Decisión firmada §4: gitleaks como motor + checks caseros del taller (.obsidian). La seguridad no se reinventa. Ojo: <code>decisiones/010</code> de batuta le DELEGA el escaneo de secretos a este bloque — mientras no exista, ese bloqueo del taller sigue sin fecha.',
+        hallazgo:'<b>CERRADA S02 (2026-07-24, PR #11):</b> los 7 checks construidos con gitleaks 8.30.1 como motor (v0.2.0). Corridas sembradas REALES: criterio 1 ✅ (secreto en commit viejo → cazado en la historia completa, REDACTADO, ⛔ NO SE PUBLICA, remediación en orden: rotar ANTES de purgar) · criterio 2 ✅ (name «express» → TOMADO detectado antes, scoped @hifede propuesto). Hallazgo de máquina: npm sin sesión (whoami E401). Evidencia: <code>s02-preflight-2026-07-24.md</code> + 2 transcripts.',
         metodo:[
           'Cada check emite evidencia trazable (commit, archivo, línea) en el informe verde/rojo.',
           'Corridas sembradas: secreto en commit viejo → BLOQUEA; nombre tomado en npm → alternativas scoped.'
         ],
-        pend:[
-          {id:'p-preflight', t:'Pre-flight completo con las 2 corridas sembradas (criterios 1 y 2)', v:'secreto viejo detectado y bloqueado + nombre tomado detectado ANTES con propuesta scoped'}
-        ],
+        pend:[],
         refs:[], prereq:['S01']
       },
       {
@@ -477,13 +475,12 @@ const DATA = [
 ];
 
 const DEBT = [
-  {t:'El motor no existe: pre-flight y ejecución pendientes', d:'El esqueleto es instalable (S01 ✓) pero el producto real —pre-flight, ejecución firmada, dogfooding— es S02–S05 (issues #2–#5). El placeholder lo declara honesto en cada corrida.', sev:'stop'},
-  {t:'batuta le delega gitleaks a un delegado que no existe', d:'<code>decisiones/010</code> de batuta difiere el escaneo de secretos a publicador — verificado en la DEBT de batuta como bloqueo «sin fecha de resolución». Se resuelve recién con S02 (pre-flight). Hasta entonces, el taller no tiene escaneo de secretos automatizado.', sev:'warn'},
+  {t:'La ejecución no existe: S03–S05 pendientes', d:'El pre-flight es REAL desde S02 (7 checks + informe bloqueante), pero la Fase 3 —crear repo, push, publish, post-verificación— sigue sin construir (S03 GitHub · S04 npm/marketplace · S05 dogfooding). El comando lo declara en cada corrida.', sev:'stop'},
+  {t:'La delegación de gitleaks (batuta/010): delegado CAPAZ, saldo pendiente', d:'Desde S02 el taller TIENE escaneo de secretos automatizado (gitleaks integrado y probado con corrida sembrada). La delegación de <code>decisiones/010</code> se salda formalmente cuando /publicar corra sobre los repos REALES del taller — candidato natural para S05 o una pasada dedicada.', sev:'warn'},
   {t:'Nació publicado a mano', d:'El repo se publicó el 2026-07-23 por decisión del dueño en sesión, con scan MANUAL de la historia (limpia: 2 commits, solo docs) — sin su propio pre-flight, porque no existe. S05 (dogfooding) lo re-verifica con el motor real. Deuda honesta, no mina.', sev:'warn'}
 ];
 
 const PLAN = [
-  {s:'S02', o:'Pre-flight: todos los checks de solo lectura + informe', b:'p02', issue:2, talle:'L', trat:'directo', pre:'S01 (#1)'},
   {s:'S03', o:'Ejecución GitHub: crear repo, push, verificación post', b:'p03', issue:3, talle:'M', trat:'directo', pre:'S02 (#2)'},
   {s:'S04', o:'Ejecución npm/marketplace: publish + post-verificación', b:'p04', issue:4, talle:'L', trat:'directo', pre:'S03 (#3)'},
   {s:'S05', o:'Dogfooding final: publicarse a sí mismo', b:'p05', issue:5, talle:'M', trat:'directo', pre:'S04 (#4)'}
@@ -499,11 +496,11 @@ const FLOWS = [
 
 const STACK = [
   {capa:'El producto (markdown puro)', items:[
-    {n:'/publicar', rol:'Pre-flight (solo lectura) → informe verde/rojo → ejecución firmada', con:'3 fases; con UN rojo no se publica nada', warn:'No existe — S01'}
+    {n:'/publicar v0.2.0', rol:'Pre-flight REAL (7 checks) → informe bloqueante → ejecución firmada (S03+)', con:'Con UN rojo no se publica nada; Fase 3 declarada no construida', warn:'Ejecución pendiente — S03/S04'}
   ]},
   {capa:'Motores de verificación', items:[
-    {n:'gitleaks', rol:'Motor de escaneo de secretos (historia completa)', con:'Decisión firmada §4: probado y mantenido, no se reinventa', warn:'Sin integrar — S02'},
-    {n:'Checks caseros del taller', rol:'Lo específico que gitleaks no conoce (.obsidian, etc.)', con:'Complemento mínimo, no reemplazo', warn:'Sin escribir — S02'}
+    {n:'gitleaks 8.30.1', rol:'Motor de escaneo de secretos (historia completa)', con:'Integrado en el check 1 con fallback de sintaxis; binario ausente = rojo, jamás se saltea', warn:''},
+    {n:'Checks caseros del taller', rol:'Lo específico que gitleaks no conoce (.obsidian, .DS_Store, paths /Users/)', con:'Check 2 sobre la historia completa — cazó el fixture por camino independiente', warn:''}
   ]},
   {capa:'Destinos (registries v1, firmados)', items:[
     {n:'GitHub', rol:'Todo repo del taller', con:'vía gh — crear, push, verificar', warn:''},
@@ -531,12 +528,17 @@ const TESTS = {
   gates: [
     {n:'claude plugin validate', cmd:'claude plugin validate plugins/publicador', est:'verde', nota:'<b>VERDE desde S01 (2026-07-24):</b> Validation passed, cero warnings.'},
     {n:'Install limpio', cmd:'CLAUDE_CONFIG_DIR=<perfil-virgen> claude plugin install publicador@fede-tools', est:'verde', nota:'<b>VERDE desde S01 (2026-07-24):</b> alta mergeada (audit-tracker#36) + install en perfil virgen EXIT 0, scope user.'},
-    {n:'Corridas sembradas', cmd:'fixtures por criterio + corridas de /publicar', est:'rojo', nota:'<b>El único gate real del producto y no existe ninguna.</b> Los 4 criterios de FICHA §6 sin evidencia — patrón S09/C3: se siembran con cada sesión.'}
+    {n:'Corridas sembradas', cmd:'fixtures prueba-s02pub-* + corridas headless de /publicar', est:'verde', nota:'<b>VERDE parcial desde S02:</b> criterios 1 y 2 de FICHA §6 clavados con corridas reales (transcripts en s02-corridas/). Los criterios 3 y 4 son de la ejecución (S03/S04).'}
   ],
-  flows: FLOWS.map(f => ({id:f.id, t:f.t, pill:'rojo', test:'Sin corrida que lo clave. Se clava en su sesión del plan con fixture sembrado.'})),
+  flows: [
+    {id:'f1', t:'Un secreto viejo bloquea la salida', pill:'verde', test:'VERDE desde S02: fixture con credencial en commit viejo → gitleaks la cazó (historia completa, redactada) → ⛔ NO SE PUBLICA.'},
+    {id:'f2', t:'Un nombre tomado se detecta antes', pill:'verde', test:'VERDE desde S02: name «express» → npm view lo mostró tomado ANTES de intentar; scoped @hifede propuesto.'},
+    {id:'f3', t:'Nada se escribe sin firma', pill:'rojo', test:'La rama de ejecución es S03 — hoy el comando no escribe por diseño (verificado en ambas corridas: cero escrituras).'},
+    {id:'f4', t:'La publicación se verifica viva', pill:'rojo', test:'Post-verificación = S03/S04. Sin corrida.'}
+  ],
   contrato: [
     {b:'p01', bt:'Esqueleto instalable', total:1, clavados:1, nota:'VERDE desde S01: validate sin warnings + install limpio EXIT 0 en perfil virgen + comando responde (headless real).'},
-    {b:'p02', bt:'Pre-flight', total:2, clavados:0, nota:'Criterios 1 (secreto viejo bloquea) y 2 (nombre tomado detectado antes) de FICHA §6. Fixtures: repo sembrado con secreto en commit viejo; nombre ocupado en npm.'},
+    {b:'p02', bt:'Pre-flight', total:2, clavados:2, nota:'VERDE desde S02: ambos criterios clavados con corridas headless reales sobre fixtures sembrados (transcripts versionados).'},
     {b:'p03', bt:'Ejecución GitHub', total:1, clavados:0, nota:'Criterio 3 (cero escrituras sin confirmación — revisión de transcript). La rama negativa es la que importa.'},
     {b:'p04', bt:'Ejecución npm/marketplace', total:1, clavados:0, nota:'Criterio 4 (end-to-end GitHub + npm de prueba, verificado vivo).'},
     {b:'p05', bt:'Dogfooding', total:1, clavados:0, nota:'Criterio de plan (§7-S05): /publicar sobre este mismo repo con informe verde.'}
@@ -546,6 +548,7 @@ const TESTS = {
 const REFS = [];
 
 const CHANGELOG = [
+  {f:'2026-07-24 (2)', t:'✅ S02 cerrada: el pre-flight es REAL — el taller tiene escaneo de secretos', d:'Re-auditoría tras el <b>PR #11</b> (mergeado por Fede). <code>/publicar</code> v0.2.0: 7 checks read-only con <b>gitleaks</b> como motor + informe bloqueante (UN rojo = ⛔, sin override). Corridas sembradas REALES: <b>criterio 1</b> (secreto en commit viejo → cazado, redactado, bloqueado, con la remediación en el orden correcto) y <b>criterio 2</b> (nombre tomado → detectado ANTES, scoped propuesto) — ambos ✅. Hallazgo de máquina: npm sin sesión (E401) → dato para S04. La delegación de gitleaks (batuta/010) tiene por fin un delegado CAPAZ. CLOSED_COUNT 1→2. Próxima: <b>S03</b> (ejecución GitHub).'},
   {f:'2026-07-24', t:'✅ S01 cerrada: el esqueleto existe, instala y dice la verdad', d:'Re-auditoría tras el <b>PR #9</b> y el alta <b>audit-tracker#36</b>, ambos mergeados por Fede. <code>plugins/publicador</code> v0.1.0: validate SIN warnings, <b>install limpio VERDE en perfil virgen</b> (EXIT 0), y corrida headless real donde <code>/publicador:publicar</code> responde <b>declarando honesto que aún no verifica nada</b> — el placeholder cumple «jamás un verde falso» antes de que exista el motor. El marketplace fede-tools quedó en 6 plugins. p-esqueleto → verde (CLOSED_COUNT 0→1). Próxima: <b>S02 (pre-flight)</b> — la sesión que le debe gitleaks al taller entero.'},
   {f:'2026-07-24', t:'🖊️ Mesa de firmas: la FICHA es plano VIGENTE', d:'Re-auditoría tras el <b>PR #7</b> (mergeado por Fede 2026-07-23 23:05 UTC — el segundo acto). La cabecera de <code>docs/FICHA.md</code> lleva ahora la <b>línea EXACTA de 011</b> (<code>Estado: VIGENTE</code> + <code>Firmado: 2026-07-23 por Fede</code>) con Procedencia 018 (re-ratificación en bloque en la mesa de firmas, elección explícita en sesión). <b>La deuda «firma en formato pre-011» sale de DEBT</b> — batuta ya puede dirigir esta obra sin frenar en la precondición. Las 4 decisiones técnicas del §4 quedaron ratificadas.'},
   {f:'2026-07-23', t:'🏁 Auditoría inicial — repo publicado, obra cero, cola despachada', d:'Primera auditoría de <code>claude-publicador</code>, disparada por el worklist de <b>cartera</b> (ítem #1: «sin remoto GitHub, invisible para la flota»). <b>El repo se publicó HOY</b> (decisión del dueño en sesión): scan manual de la historia completa antes de salir — 2 commits, solo docs, limpio. Estado real: <b>plano completo y bueno, obra CERO</b> — la ficha define 3 fases, 4 decisiones técnicas (2 marcadas «firmadas» el 07-17, en formato pre-011 → deuda de mesa de firmas) y 4 criterios de aceptación; el código no existe. Hallazgo estructural: <code>decisiones/010</code> de batuta le delega gitleaks a este producto — el taller entero espera su S02. Plan: <b>S01</b> esqueleto → <b>S02</b> pre-flight → <b>S03</b> GitHub → <b>S04</b> npm/marketplace → <b>S05</b> dogfooding (issues #1–#5, cadena estricta). Calibración heredada del taller: sesiones S/M/L · Fede + esta máquina · directo · <b>modo orquestado</b>.'}
