@@ -39,7 +39,9 @@ rojo. Cada check emite evidencia trazable (comando + salida relevante).
      usuario autenticado (`npm whoami`). Si da 404, libre.
    - GitHub: `gh api repos/<owner>/<repo>` — 404 = libre; 200 = ya existe (¿es el mismo
      proyecto? si no, rojo).
-   - Marketplace: ¿ya hay entrada con ese nombre en el `marketplace.json` de fede-tools?
+   - Marketplace: ¿ya hay entrada con ese nombre en el catálogo fede-tools? El catálogo
+     vive en `.claude-plugin/marketplace.json` del repo `hifede1/claude-audit-tracker`
+     (leelo vía `gh api` — el nombre del marketplace y el del repo NO coinciden).
 6. **Cuenta/scope correctos.** `npm whoami` y `gh auth status`: la cuenta activa tiene que
    ser la esperada por el repo (en este taller: npm `hifede`, GitHub `hifede1` — la lección
    del scope de n8n: publicar con la cuenta equivocada rompe el install documentado).

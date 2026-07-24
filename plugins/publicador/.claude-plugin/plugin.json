@@ -1,7 +1,7 @@
 {
   "name": "publicador",
   "description": "Pre-flight y publicación firmada: verifica TODO antes de que algo salga al mundo (historia de git sin secretos en TODOS los commits, README/LICENSE, metadata, nombre disponible, cuenta/scope) y recién con checks verdes y firma humana ejecuta la publicación en GitHub, npm o el marketplace de plugins. Con UN check rojo no se publica nada; el silencio no es aprobación.",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "author": {
     "name": "Federico Pernice"
   },

@@ -1,0 +1,21 @@
+# Informe de pre-flight — claude-publicador (re-corrida S05)
+
+**Destinos: GitHub + marketplace · SHA auditado: `976e5bb` (rama `s05-dogfooding`) · Modo: solo informe, cero escrituras**
+
+| # | Check | Estado | Evidencia |
+|---|-------|--------|-----------|
+| 1 | Secretos en toda la historia (gitleaks) | 🟢 | `gitleaks git --redact --no-banner .` → 27 commits escaneados, **no leaks found**, exit 0 |
+| 2 | Checks caseros del taller | 🟢 | `git log --all --name-only` + rg: sin `.obsidian/`, `.DS_Store`, `.env*`, `*.pem`, `id_rsa*` en ningún commit. Barrido de `/Users/` en configs (`*.json/yaml/yml/toml`) de todos los commits: cero hits |
+| 3 | README y LICENSE en HEAD | 🟢 | Ambos presentes en la raíz. LICENSE es **MIT** («Copyright (c) 2026 Federico Pernice») — coincide con el `"license": "MIT"` del plugin.json. **Este era rojo en la corrida anterior; el fix quedó** |
+| 4 | Metadata completa (plugin.json) | 🟢 | `name`, `description`, `version` (0.5.0) presentes, más `author`, `repository`, `license`, `keywords`. Sin campos faltantes |
+| 5 | Nombre en el registry destino | 🟢 | GitHub: `gh api repos/hifede1/claude-publicador` → 200, público, default `main` — **es este mismo proyecto**. Marketplace: catálogo fede-tools ubicado en `hifede1/claude-audit-tracker/.claude-plugin/marketplace.json`, entrada `publicador` existente como `git-subdir` con URL HTTPS completa a este repo y descripción **idéntica** a la del plugin.json (cero drift). **El otro rojo anterior — catálogo no ubicado — también cerrado** |
+| 6 | Cuenta/scope correctos | 🟢 | `gh auth status` → cuenta activa **hifede1** (la esperada; `estebaproject` logueada pero inactiva). npm no aplica: no es destino de esta corrida |
+| 7 | .gitignore sano | 🟢 | Cubre `node_modules/`, `.DS_Store`, `.env` + `.env.*`, y `*.log` de yapa |
+
+## ✅ PRE-FLIGHT VERDE
+
+7 de 7, hermano. Los dos rojos del dogfooding anterior — LICENSE ausente y catálogo sin ubicar — quedaron **efectivamente cerrados** por el fix de `976e5bb`. Esta vez no hay nada que arreglar.
+
+Sobre la ejecución: el pedido dice explícitamente «sin ejecución, solo el informe», y además no hay confirmación humana en la invocación — así que **cero escrituras**, tal como manda la regla de oro. Dato igual de relevante: no habría nada que ejecutar tampoco, porque ambos destinos ya están vivos — el repo es público en GitHub y la entrada `publicador` ya está mergeada en el catálogo. Una Fase 3 acá solo tendría sentido para una versión futura (bump de `version` + PR al catálogo si cambia la descripción).
+
+El informe es el único producto de la corrida, y esta vez es todo verde. Es así de fácil.

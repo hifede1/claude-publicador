@@ -1,0 +1,24 @@
+# Informe de pre-flight — dogfooding S05 sobre `claude-publicador`
+
+Veredicto primero, sin vueltas: **⛔ NO SE PUBLICA — 5 verdes, 2 rojos.** Y acá está la gracia del dogfooding, loco: el repo YA está público... y el publicador acaba de encontrar que se publicó violando su propia regla. Un informe honesto o no es informe.
+
+| # | Check | Estado | Evidencia |
+|---|-------|--------|-----------|
+| 1 | Secretos en toda la historia (gitleaks) | 🟢 | `gitleaks git --redact --no-banner .` → 26 commits escaneados, `no leaks found` |
+| 2 | Checks caseros (archivos personales, paths de usuario) | 🟢 | `git log --all --name-only` → sin `.env*`, `.DS_Store`, `.obsidian/`, `*.pem`, `id_rsa*` en ningún commit. Los 14 hits de `/Users/` en la historia son autorreferenciales (el comando y los transcripts de auditoría citan el patrón del check); `git grep '/Users/federicopernice'` sobre `rev-list --all` → 0 paths reales |
+| 3 | README y LICENSE en HEAD | 🔴 | `git ls-tree HEAD` → `README.md` presente, **LICENSE AUSENTE**. Y el detalle que duele: `plugin.json` declara `"license": "MIT"` — se promete una licencia que no existe como archivo |
+| 4 | Metadata del plugin | 🟢 | `plugins/publicador/.claude-plugin/plugin.json` → name, description, version (0.4.0), author, repository, license, keywords: todo presente |
+| 5 | Nombre en registry destino | 🔴 | GitHub: `gh api repos/hifede1/claude-publicador` → 200, público, es este mismo proyecto (coincide con el `repository` del plugin.json) — verde. Marketplace: **`gh api repos/hifede1/fede-tools` → 404**, y tampoco existe en `~/Developer` — no hay `marketplace.json` que consultar, y un check que no pudo correr JAMÁS cuenta como verde |
+| 6 | Cuenta correcta | 🟢 | `gh auth status` → cuenta activa `hifede1` (la esperada; `estebaproject` presente pero inactiva). npm: N/A, destino no pedido |
+| 7 | `.gitignore` sano | 🟢 | Cubre `node_modules/`, `.DS_Store`, `.env`, `.env.*`, `*.log` |
+
+## Qué arreglar y cómo
+
+1. **LICENSE (rojo del check 3):** crear el archivo `LICENSE` con el texto MIT y commitearlo. Es así de fácil — un archivo, un commit. Hasta entonces, el repo público promete MIT en la metadata sin otorgarlo legalmente, que es exactamente el tipo de drift que este plugin existe para cazar.
+2. **fede-tools (rojo del check 5, marketplace):** el repo del marketplace no existe ni en GitHub ni en el disco. Sin él no hay `marketplace.json`, no hay rama+PR, no hay alta posible. Crear `hifede1/fede-tools` con su `.claude-plugin/marketplace.json` es precondición dura de cualquier destino marketplace.
+
+## Cierre honesto
+
+No hubo Fase 3 y no corresponde: la invocación lo dijo explícito y, además, con UN rojo no hay ejecución — acá hay dos. Cero escrituras en esta corrida; el informe es el único producto, tal como manda la regla de oro.
+
+Dos gotchas de la corrida que valen oro para el propio comando (ya quedaron en memoria): `fd` ignora ocultos por defecto y casi me como un falso rojo con el `plugin.json` de `.claude-plugin/`; y un pipeline `rg ... | head; echo $?` mide el exit de `head`, no el de `rg` — verde falso servido en bandeja. El guardián también se audita a sí mismo, ¿se entiende? Eso es dogfooding de verdad.
