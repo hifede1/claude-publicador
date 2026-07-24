@@ -2,7 +2,7 @@
   "schema_version": "1.0",
   "proyecto": "claude-publicador",
   "last_audit": "2026-07-24",
-  "closed_count": 1,
+  "closed_count": 2,
   "calibracion": {
     "unidad": "sesiones (~2-4h), talla S/M/L",
     "actores": "Fede + una máquina (esta)",
@@ -22,15 +22,9 @@
       "id": "p02",
       "nombre": "Pre-flight de solo lectura (S02)",
       "zona": "El producto — pre-flight y ejecución",
-      "estado": "pend",
-      "resumen": "Historia completa sin secretos (gitleaks + checks caseros), README/LICENSE, metadata, nombre disponible, scope. UN rojo = no se publica. Sin obra.",
-      "pendientes": [
-        {
-          "id": "p-preflight",
-          "txt": "Pre-flight completo con las corridas de los criterios 1 y 2",
-          "sesion": "S02"
-        }
-      ]
+      "estado": "hecho",
+      "resumen": "CERRADA S02: 7 checks reales con gitleaks; criterios 1 y 2 clavados con corridas sembradas; npm sin sesión detectado (dato para S04).",
+      "pendientes": []
     },
     {
       "id": "p03",
@@ -77,17 +71,6 @@
   ],
   "plan": [
     {
-      "sesion": "S02",
-      "titulo": "Pre-flight: todos los checks de solo lectura + informe",
-      "estimacion": 1,
-      "deps": [
-        "S01"
-      ],
-      "cierra": [
-        "p-preflight"
-      ]
-    },
-    {
       "sesion": "S03",
       "titulo": "Ejecución GitHub: crear repo, push, verificación post",
       "estimacion": 1,
@@ -125,9 +108,9 @@
   "referencias": [],
   "referencias_faltantes": [],
   "deuda": [
-    "El motor no existe: pre-flight y ejecución son S02–S05 — el esqueleto instalable (S01) lo declara honesto",
-    "batuta le delega gitleaks (decisiones/010) y no puede ejecutarlo hasta S02",
-    "Nació publicado a mano el 2026-07-23 (historia escaneada manualmente, limpia) — S05 lo re-verifica",
-    "FICHA VIGENTE desde la mesa de firmas 2026-07-23 (línea exacta de 011 + Procedencia 018) — batuta puede dirigir esta obra"
+    "La ejecución no existe: S03–S05 pendientes (el comando lo declara)",
+    "Delegación gitleaks (batuta/010): delegado CAPAZ desde S02 — se salda corriendo /publicar sobre los repos reales del taller",
+    "npm sin sesión en esta máquina (whoami E401) — npm login antes de S04",
+    "Nació publicado a mano (S05 lo re-verifica)"
   ]
 }
