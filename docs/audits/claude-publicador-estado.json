@@ -2,7 +2,7 @@
   "schema_version": "1.0",
   "proyecto": "claude-publicador",
   "last_audit": "2026-07-24",
-  "closed_count": 4,
+  "closed_count": 5,
   "calibracion": {
     "unidad": "sesiones (~2-4h), talla S/M/L",
     "actores": "Fede + una máquina (esta)",
@@ -46,37 +46,19 @@
       "id": "p05",
       "nombre": "Dogfooding: publicarse a sí mismo (S05)",
       "zona": "Cierre — el ciclo completo",
-      "estado": "pend",
-      "resumen": "El repo nació publicado a mano (2026-07-23, decisión del dueño); S05 lo re-verifica con el motor real.",
-      "pendientes": [
-        {
-          "id": "p-dogfood",
-          "txt": "Corrida completa de /publicar sobre este repo con informe verde",
-          "sesion": "S05"
-        }
-      ]
+      "estado": "hecho",
+      "resumen": "CERRADA S05: dos minas propias cazadas y cerradas, 7/7 verde sobre sí mismo, flota barrida (270 commits, cero leaks — 010 saldada).",
+      "pendientes": []
     }
   ],
-  "plan": [
-    {
-      "sesion": "S05",
-      "titulo": "Dogfooding final: publicarse a sí mismo",
-      "estimacion": 1,
-      "deps": [
-        "S04"
-      ],
-      "cierra": [
-        "p-dogfood"
-      ]
-    }
-  ],
+  "plan": [],
   "decisiones_pendientes": [],
   "referencias": [],
   "referencias_faltantes": [],
   "deuda": [
-    "Queda S05 (dogfooding): /publicar sobre su propio repo + saldo formal de gitleaks (batuta/010) sobre la flota",
+    "PLAN COMPLETO 2026-07-24 (S01–S05) — producto en mantenimiento",
     "Cuenta npm hifede con 2FA auth-and-writes: todo publish/unpublish exige OTP del dueño (rasgo, no bug)",
-    "Nació publicado a mano (S05 lo re-verifica)",
-    "Registro de verificación firmado 2026-07-24: docs/verificacion/criterios-clasificados.md (4 criterios clasificados por el dueño)"
+    "Registro de verificación firmado: docs/verificacion/criterios-clasificados.md",
+    "Fixture npm a despublicar por el dueño: @hifede/prueba-s04pub-npm (ventana 72h)"
   ]
 }
