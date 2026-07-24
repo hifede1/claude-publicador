@@ -385,12 +385,12 @@
    ========================================================================== */
 
 const LAST_AUDIT = '2026-07-24';
-const CLOSED_COUNT = 3;              // S01 + S02 + S03 (ejecución GitHub) cerradas y verificadas 2026-07-24.
+const CLOSED_COUNT = 4;              // S01–S04 cerradas y verificadas 2026-07-24. Queda S05 (dogfooding).
 const REPO = 'hifede1/claude-publicador';
 
 /* Estimación: talle S / M / L por pendiente (calibración heredada del taller). */
 const EST = {
-  'p-exec-npm':'L','p-dogfood':'M'
+  'p-dogfood':'M'
 };
 
 const DATA = [
@@ -438,17 +438,15 @@ const DATA = [
         refs:[], prereq:['S02']
       },
       {
-        id:'p04', titulo:'Ejecución npm + marketplace (S04)', estado:'pend',
+        id:'p04', titulo:'Ejecución npm + marketplace (S04)', estado:'hecho',
         sesion:'S04', talle:'L', issue:4, trat:'directo',
         planteamiento:'Las otras dos salidas firmadas (§4, registries v1): npm para lo instalable por npx, marketplace de plugins para el taller. Con esto los criterios 3 y 4 de la ficha quedan completos.',
-        hallazgo:'Sin obra. El scope/cuenta npm es una de las minas reales del catálogo de n8n (FICHA §8).',
+        hallazgo:'<b>CERRADA S04 (2026-07-24, PR #17):</b> E2E npm en tres actos — freno informado sin confirmación (404 verificado) · freno LIMPIO contra el 2FA del dueño (auth-and-writes: el OTP es otra firma que la máquina no fabrica) · publish del dueño con post-verificación en 3 capas, incluida la reina: <b>dist.shasum del registry == shasum de su terminal</b>. Marketplace: patrón de las 4 altas reales, firma=merge del dueño. Evidencia: <code>s04-npm-2026-07-24.md</code> + 2 transcripts.',
         metodo:[
           'npm publish con scope/cuenta verificados en pre-flight + post-verificación (paquete vivo en el registry).',
           'Marketplace: alta con el patrón del taller.'
         ],
-        pend:[
-          {id:'p-exec-npm', t:'Publicación npm de prueba + marketplace, end-to-end con post-verificación', v:'criterios 3 y 4 de FICHA §6 completos, con evidencia'}
-        ],
+        pend:[],
         refs:[], prereq:['S03']
       }
     ]
@@ -473,13 +471,12 @@ const DATA = [
 ];
 
 const DEBT = [
-  {t:'npm y marketplace sin ejecución: S04–S05 pendientes', d:'GitHub se ejecuta de verdad desde S03 (con doble precondición y post-verificación). npm/marketplace (S04 — requiere npm login en la máquina) y el dogfooding (S05) cierran el plan. El comando declara S04 no construido.', sev:'stop'},
+  {t:'Falta el cierre del círculo: S05 (dogfooding)', d:'Los tres destinos se ejecutan de verdad (GitHub S03, npm/marketplace S04). Queda la última sesión del plan: /publicar corriendo sobre su propio repo — y de paso el saldo formal de la delegación gitleaks (batuta/010) sobre los repos reales del taller.', sev:'warn'},
   {t:'La delegación de gitleaks (batuta/010): delegado CAPAZ, saldo pendiente', d:'Desde S02 el taller TIENE escaneo de secretos automatizado (gitleaks integrado y probado con corrida sembrada). La delegación de <code>decisiones/010</code> se salda formalmente cuando /publicar corra sobre los repos REALES del taller — candidato natural para S05 o una pasada dedicada.', sev:'warn'},
   {t:'Nació publicado a mano', d:'El repo se publicó el 2026-07-23 por decisión del dueño en sesión, con scan MANUAL de la historia (limpia: 2 commits, solo docs) — sin su propio pre-flight, porque no existe. S05 (dogfooding) lo re-verifica con el motor real. Deuda honesta, no mina.', sev:'warn'}
 ];
 
 const PLAN = [
-  {s:'S04', o:'Ejecución npm/marketplace: publish + post-verificación', b:'p04', issue:4, talle:'L', trat:'directo', pre:'S03 (#3)'},
   {s:'S05', o:'Dogfooding final: publicarse a sí mismo', b:'p05', issue:5, talle:'M', trat:'directo', pre:'S04 (#4)'}
 ];
 
@@ -493,7 +490,7 @@ const FLOWS = [
 
 const STACK = [
   {capa:'El producto (markdown puro)', items:[
-    {n:'/publicar v0.3.0', rol:'Pre-flight REAL (7 checks) → informe bloqueante → ejecución GitHub firmada con post-verificación', con:'Verde pleno + confirmación informada, o nada. npm/marketplace = S04', warn:'npm/marketplace pendientes — S04'}
+    {n:'/publicar v0.4.0', rol:'Pre-flight REAL → informe bloqueante → ejecución firmada en los 3 destinos con post-verificación viva', con:'Verde pleno + confirmación informada, o nada. El alta del marketplace jamás se automergea', warn:'Dogfooding — S05'}
   ]},
   {capa:'Motores de verificación', items:[
     {n:'gitleaks 8.30.1', rol:'Motor de escaneo de secretos (historia completa)', con:'Integrado en el check 1 con fallback de sintaxis; binario ausente = rojo, jamás se saltea', warn:''},
@@ -531,13 +528,13 @@ const TESTS = {
     {id:'f1', t:'Un secreto viejo bloquea la salida', pill:'verde', test:'VERDE desde S02: fixture con credencial en commit viejo → gitleaks la cazó (historia completa, redactada) → ⛔ NO SE PUBLICA.'},
     {id:'f2', t:'Un nombre tomado se detecta antes', pill:'verde', test:'VERDE desde S02: name «express» → npm view lo mostró tomado ANTES de intentar; scoped @hifede propuesto.'},
     {id:'f3', t:'Nada se escribe sin firma', pill:'verde', test:'VERDE desde S03: corrida sin confirmación → informe + freno, 404 verificado, cero escrituras. Con confirmación explícita → ejecuta. El silencio no aprueba, demostrado.'},
-    {id:'f4', t:'La publicación se verifica viva', pill:'verde', test:'VERDE (GitHub) desde S03: post-verificación por API — 200, visibilidad correcta, SHA remoto==local (242a541). La mitad npm es S04.'}
+    {id:'f4', t:'La publicación se verifica viva', pill:'verde', test:'VERDE PLENO desde S04: GitHub con SHA verificado (S03) + npm con dist.shasum verificado contra la terminal del dueño (bb81dcf…).'}
   ],
   contrato: [
     {b:'p01', bt:'Esqueleto instalable', total:1, clavados:1, nota:'VERDE desde S01: validate sin warnings + install limpio EXIT 0 en perfil virgen + comando responde (headless real).'},
     {b:'p02', bt:'Pre-flight', total:2, clavados:2, nota:'VERDE desde S02: ambos criterios clavados con corridas headless reales sobre fixtures sembrados (transcripts versionados).'},
     {b:'p03', bt:'Ejecución GitHub', total:1, clavados:1, nota:'VERDE desde S03: rama negativa (freno + cero escrituras) y positiva (E2E privado con SHA verificado), ambas con transcript.'},
-    {b:'p04', bt:'Ejecución npm/marketplace', total:1, clavados:0, nota:'Criterio 4 (end-to-end GitHub + npm de prueba, verificado vivo).'},
+    {b:'p04', bt:'Ejecución npm/marketplace', total:1, clavados:1, nota:'VERDE desde S04: E2E npm con shasum verificado; marketplace = patrón de las 4 altas reales.'},
     {b:'p05', bt:'Dogfooding', total:1, clavados:0, nota:'Criterio de plan (§7-S05): /publicar sobre este mismo repo con informe verde.'}
   ]
 };
@@ -545,6 +542,7 @@ const TESTS = {
 const REFS = [];
 
 const CHANGELOG = [
+  {f:'2026-07-24 (5)', t:'✅ S04 cerrada: los tres destinos ejecutan — y el 2FA se sumó a la doctrina', d:'Re-auditoría tras el <b>PR #17</b> (mergeado por Fede). npm en tres actos: freno informado (irreversibilidad advertida ANTES de confirmar) · freno limpio contra el <b>2FA del dueño</b> (el OTP como firma infabricable — mismo principio que 009/018 de batuta) · publish del dueño post-verificado en 3 capas con el <b>shasum del registry idéntico al de su terminal</b>. Marketplace: firma=merge del dueño, jamás automerge. CLOSED_COUNT 3→4. Queda <b>S05</b> — la última sesión del último plan abierto del taller.'},
   {f:'2026-07-24 (4)', t:'🖊️ Registro de verificación firmado: los 4 criterios clasificados por el dueño', d:'Bookkeeping tras el <b>PR #15</b> (mergeado por Fede): nace <code>docs/verificacion/criterios-clasificados.md</code> — los 4 criterios de la FICHA clasificados por Fede en sesión interactiva (primera corrida positiva real del verificador): S02_C1/C2 <b>testeables automáticos</b> (sus corridas sembradas son el artefacto), S03_C3/S04_C4 <b>con esfuerzo</b> (la mitad npm de C4 espera S04). Cero manuales, cero limbo. La pestaña Tests de la próxima auditoría consume este contrato tal cual. Sin cambios de CLOSED_COUNT (no era pendiente del plan).'},
   {f:'2026-07-24 (3)', t:'✅ S03 cerrada: la primera salida que escribe — con doble llave', d:'Re-auditoría tras el <b>PR #13</b> (mergeado por Fede). Fase 3 GitHub en v0.3.0: <b>verde pleno + confirmación humana explícita e informada, o nada</b>. Corrida negativa: freno con 404 y cero escrituras verificados. Corrida positiva: <code>hifede1/prueba-s03pub-e2e</code> (privado) creado E2E con post-verificación de SHA. Momento de la jornada: el check 6 advirtió las dos cuentas gh logueadas y la verificación independiente tropezó exactamente ahí — la herramienta justificada en vivo. CLOSED_COUNT 2→3. Quedan <b>S04</b> (npm/marketplace — antes: npm login) y <b>S05</b> (dogfooding, salda la delegación gitleaks de batuta/010).'},
   {f:'2026-07-24 (2)', t:'✅ S02 cerrada: el pre-flight es REAL — el taller tiene escaneo de secretos', d:'Re-auditoría tras el <b>PR #11</b> (mergeado por Fede). <code>/publicar</code> v0.2.0: 7 checks read-only con <b>gitleaks</b> como motor + informe bloqueante (UN rojo = ⛔, sin override). Corridas sembradas REALES: <b>criterio 1</b> (secreto en commit viejo → cazado, redactado, bloqueado, con la remediación en el orden correcto) y <b>criterio 2</b> (nombre tomado → detectado ANTES, scoped propuesto) — ambos ✅. Hallazgo de máquina: npm sin sesión (E401) → dato para S04. La delegación de gitleaks (batuta/010) tiene por fin un delegado CAPAZ. CLOSED_COUNT 1→2. Próxima: <b>S03</b> (ejecución GitHub).'},
