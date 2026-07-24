@@ -1,0 +1,33 @@
+# Informe de ejecución — S04 destino npm
+
+**TLDR: pre-flight 7/7 VERDE, precondiciones de Fase 3 cumplidas, pero el publish NO ocurrió: incidente EOTP. La cuenta `hifede` exige un one-time password (2FA) al publicar y esta sesión no interactiva no puede completar ese flujo. El registry sigue en 404 — no quedó nada a medias.**
+
+## Pre-flight (Fase 1-2)
+
+| # | Check | Estado | Evidencia |
+|---|-------|--------|-----------|
+| 1 | Secretos en toda la historia (gitleaks) | 🟢 | 1 commit escaneado, "no leaks found" |
+| 2 | Checks caseros (archivos personales, paths `/Users/`) | 🟢 | `git log --all` + `git grep` sobre `rev-list --all` → sin hits |
+| 3 | README y LICENSE en HEAD | 🟢 | Ambos presentes |
+| 4 | Metadata `package.json` | 🟢 | name, version 0.0.1, MIT, repository, `files`, `publishConfig.access: public` |
+| 5 | Nombre libre en npm | 🟢 | `npm view` → E404 |
+| 6 | Cuenta/scope | 🟢 | `npm whoami` = **hifede** == scope `@hifede` |
+| 7 | `.gitignore` sano | 🟢 | `node_modules/`, `.env*`, `.DS_Store` |
+
+**✅ PRE-FLIGHT VERDE** — y la confirmación humana vino explícita e informada en la propia invocación (forma b), incluido el reconocimiento de la irreversibilidad.
+
+## Ejecución (Fase 3) — INCIDENTE
+
+1. Re-verifiqué la cuenta EN el momento: `npm whoami` → `hifede` ✓.
+2. `npm publish --access public` → el tarball se armó bien (4 archivos, 1.1 kB) pero npm cortó con **EOTP**: "This operation requires a one-time password". La cuenta tiene 2FA de escritura y el flujo de autenticación es un browser interactivo que acá no existe.
+3. **Post-verificación**: `npm view @hifede/prueba-s04pub-npm version` sigue devolviendo **404**. Cero publicado, cero estado intermedio. Incidente limpio, reportado, no tapado.
+
+## Cómo destrabarlo (elegís vos)
+
+- **A mano (lo más simple)**: en el repo, corré `npm publish --access public` en tu terminal — npm te abre el flujo de auth en el browser y listo. O pasale el código directo: `npm publish --access public --otp=XXXXXX`.
+- **Sesión interactiva**: re-invocá `/publicador:publicar` desde una sesión donde puedas meter el OTP cuando npm lo pida.
+- **Para el futuro del taller**: un *automation token* de npm (granular access token con bypass de 2FA para publish) es la vía para que el publicador pueda ejecutar en contextos no interactivos. Tradeoff real: ese token es un secreto de alto valor que hay que guardar bien — la 2FA que hoy te frenó es exactamente la que protege el scope.
+
+Detalle menor que vale arreglar en el fixture: npm avisó que `repository` como string se auto-corrige a objeto al publicar — un `npm pkg fix` lo deja prolijo en el fuente.
+
+Después del publish manual, la post-verificación es `npm view @hifede/prueba-s04pub-npm version` == `0.0.1`, y el unpublish del fixture entra en la ventana de 72h. Ya te estoy diciendo: el sistema funcionó exactamente como debía — verde pleno, confirmación informada, y cuando el mundo real puso un muro (2FA), frenó limpio y lo declaró. Eso ES el publicador haciendo su trabajo.

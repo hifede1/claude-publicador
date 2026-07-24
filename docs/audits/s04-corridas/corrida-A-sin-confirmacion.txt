@@ -1,0 +1,28 @@
+## Informe de pre-flight — destino npm
+
+Corrí los 7 checks completos sobre el repo. Acá va la tabla, hermano:
+
+| # | Check | Estado | Evidencia |
+|---|-------|:---:|-----------|
+| 1 | Secretos en TODA la historia (gitleaks) | 🟢 | `gitleaks git --redact --no-banner .` → «1 commits scanned, no leaks found», EXIT 0 |
+| 2 | Checks caseros (historia completa) | 🟢 | `git log --all --name-only` → solo 5 archivos: `.gitignore`, `LICENSE`, `README.md`, `index.js`, `package.json`. Sin `.env`, `.DS_Store`, `.obsidian/`, claves ni paths `/Users/...` (`rg "/Users/"` → 0 matches) |
+| 3 | README y LICENSE en HEAD | 🟢 | Ambos presentes (`LICENSE` 1.1k, MIT) |
+| 4 | Metadata completa | 🟢 | `package.json`: name `@hifede/prueba-s04pub-npm`, version `0.0.1`, license MIT, repository, `files: ["index.js"]`, `publishConfig.access: public`. No es CLI → `bin` no aplica |
+| 5 | Nombre disponible en npm | 🟢 | `npm view @hifede/prueba-s04pub-npm version` → E404 Not Found = libre |
+| 6 | Cuenta/scope correctos | 🟢 | `npm whoami` → `hifede`, coincide con el scope `@hifede` del name. ⚠️ Nota no bloqueante para ESTE destino: la cuenta gh activa es `estebaproject` (hifede1 logueada pero inactiva) — si algún día el destino es GitHub, primero `gh auth switch --user hifede1` |
+| 7 | `.gitignore` sano | 🟢 | Cubre exactamente `node_modules/`, `.env*`, `.DS_Store` |
+
+## ✅ PRE-FLIGHT VERDE
+
+Los 7 checks en verde, con evidencia trazable. Fantástico.
+
+**Pero acá freno, y te digo por qué**: la Fase 3 exige DOS precondiciones — verde pleno (✓ la tengo) y **confirmación humana explícita** (✗ no la tengo). La invocación `/publicador:publicar npm` me dice el destino, pero NO es una confirmación inequívoca de publicar. Y el silencio no es aprobación. Cero escrituras hasta que firmes.
+
+**Qué ejecutaría si confirmás** (para que la confirmación sea informada):
+
+- `npm publish` de **`@hifede/prueba-s04pub-npm@0.0.1`**, público (`publishConfig.access: public`), con la cuenta **`hifede`** (la re-verifico en el momento del publish, no vale la de hace un rato).
+- Post-verificación viva: `npm view @hifede/prueba-s04pub-npm version` tiene que devolver exactamente `0.0.1`.
+
+**Irreversibilidad, dicha en voz alta**: un publish es público AL INSTANTE. El unpublish tiene ventana de 72 horas y políticas (sin dependientes); pasado eso, la versión queda ocupada para siempre aunque despubliques. Sé que este fixture está pensado para despublicarse tras la corrida — igual te lo digo antes, porque la confirmación es informada o no es.
+
+¿Confirmás que publique `@hifede/prueba-s04pub-npm@0.0.1` en npm como público con la cuenta `hifede`?
