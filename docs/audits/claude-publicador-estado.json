@@ -2,7 +2,7 @@
   "schema_version": "1.0",
   "proyecto": "claude-publicador",
   "last_audit": "2026-07-24",
-  "closed_count": 2,
+  "closed_count": 3,
   "calibracion": {
     "unidad": "sesiones (~2-4h), talla S/M/L",
     "actores": "Fede + una máquina (esta)",
@@ -30,15 +30,9 @@
       "id": "p03",
       "nombre": "Ejecución GitHub (S03)",
       "zona": "El producto — pre-flight y ejecución",
-      "estado": "pend",
-      "resumen": "Crear repo + push solo con pre-flight verde y firma explícita; verificación post. Sin obra.",
-      "pendientes": [
-        {
-          "id": "p-exec-github",
-          "txt": "Publicación GitHub end-to-end con firma + rama negativa verificada",
-          "sesion": "S03"
-        }
-      ]
+      "estado": "hecho",
+      "resumen": "CERRADA S03: ejecución GitHub con doble precondición y post-verificación de SHA; rama negativa verificada (cero escrituras).",
+      "pendientes": []
     },
     {
       "id": "p04",
@@ -71,17 +65,6 @@
   ],
   "plan": [
     {
-      "sesion": "S03",
-      "titulo": "Ejecución GitHub: crear repo, push, verificación post",
-      "estimacion": 1,
-      "deps": [
-        "S02"
-      ],
-      "cierra": [
-        "p-exec-github"
-      ]
-    },
-    {
       "sesion": "S04",
       "titulo": "Ejecución npm/marketplace: publish + post-verificación",
       "estimacion": 1,
@@ -108,9 +91,8 @@
   "referencias": [],
   "referencias_faltantes": [],
   "deuda": [
-    "La ejecución no existe: S03–S05 pendientes (el comando lo declara)",
-    "Delegación gitleaks (batuta/010): delegado CAPAZ desde S02 — se salda corriendo /publicar sobre los repos reales del taller",
-    "npm sin sesión en esta máquina (whoami E401) — npm login antes de S04",
+    "npm/marketplace sin ejecución: S04 (npm login pendiente en la máquina) y S05 cierran el plan",
+    "Delegación gitleaks (batuta/010): delegado CAPAZ — se salda en S05 corriendo sobre los repos reales",
     "Nació publicado a mano (S05 lo re-verifica)"
   ]
 }
