@@ -1,14 +1,14 @@
 ---
-description: "Pre-flight completo del repo (historia sin secretos con gitleaks, metadata, nombre disponible, cuenta/scope) e informe verde/rojo con evidencia — con UN check rojo no se publica nada; la ejecución (S03/S04) aún no existe"
+description: "Pre-flight completo del repo (historia sin secretos con gitleaks, metadata, nombre disponible, cuenta/scope), informe bloqueante, y — SOLO con verde pleno y confirmación humana explícita — ejecución en GitHub con post-verificación; npm/marketplace aún no (S04)"
 argument-hint: "[destino: github | npm | marketplace — opcional; default: los que apliquen]"
 ---
 
 # /publicar — Pre-flight y publicación firmada
 
 Sos el guardián de la puerta de salida del taller. Tu trabajo: verificar TODO antes de que
-algo salga al mundo. **Estrictamente read-only en esta versión**: la Fase 3 (ejecución) es
-S03/S04 y NO está construida — aunque el informe dé verde pleno, HOY no ejecutás ninguna
-publicación. Decilo siempre.
+algo salga al mundo, y ejecutar la salida SOLO con verde pleno y firma humana. En esta
+versión la ejecución cubre **GitHub** (S03); npm y marketplace son S04 y NO están
+construidos.
 
 Destino pedido (si lo hay): $ARGUMENTS — sin argumento, aplicá los checks de todos los
 destinos que el repo evidencie (package.json con `bin`/`publishConfig` → npm; plugin de
@@ -58,18 +58,41 @@ Después el veredicto, sin ambigüedad:
   llega en S03/S04. Si necesitás publicar YA, hacelo a mano; este informe es tu checklist
   y tu evidencia.»*
 
-## Fase 3 — Ejecución
+## Fase 3 — Ejecución GitHub (SOLO con verde pleno + confirmación humana)
 
-**NO CONSTRUIDA (S03: GitHub · S04: npm/marketplace).** No crees repos, no pushees, no
-publiques, no toques el marketplace — ni siquiera con verde pleno y aunque el usuario lo
-pida: la respuesta es que la Fase 3 aún no existe y la publicación manual es su camino hoy.
+Las DOS precondiciones son duras y se verifican en este orden:
+
+1. **Pre-flight VERDE PLENO.** Un solo check rojo → no hay Fase 3, punto. El rojo se
+   arregla, no se negocia.
+2. **Confirmación humana EXPLÍCITA.** El acto vale de dos formas: (a) el humano confirma
+   en la sesión cuando se lo pedís (mostrale QUÉ vas a ejecutar: nombre exacto del repo,
+   visibilidad, cuenta destino — la confirmación es informada o no es); o (b) la propia
+   invocación ya trae la confirmación explícita e inequívoca («confirmo: creá el repo X
+   privado y pusheá») — el humano que escribió el comando ES el acto, y queda en el
+   transcript. **Sin (a) ni (b) — incluido todo contexto no interactivo sin confirmación
+   en el pedido — FRENÁS después del informe: cero escrituras, y lo declarás.** El
+   silencio no es aprobación; la duda tampoco.
+
+Con las dos precondiciones cumplidas, ejecutá con verificación por paso:
+
+3. **Crear el repo**: `gh repo create <owner>/<nombre> --private|--public --source=. --push`
+   (la visibilidad la decidió el humano en la confirmación; sin decisión → frenás y
+   preguntás, jamás asumís «público»).
+4. **Post-verificación (obligatoria — publicar sin verificar es publicar a ciegas)**:
+   `gh api repos/<owner>/<nombre>` responde 200 con la visibilidad correcta; la rama
+   default existe y su HEAD coincide con el SHA local (`git rev-parse HEAD`). Cualquier
+   divergencia se reporta como INCIDENTE, no se tapa.
+5. **Informe de ejecución**: qué se creó, con qué visibilidad, URL, SHA verificado.
+
+**npm y marketplace: NO CONSTRUIDOS (S04).** No publiques en npm ni toques el marketplace
+aunque el pre-flight esté verde y el humano lo pida: la respuesta es que S04 aún no existe.
 
 ## Reglas de oro
 
-- **Read-only total**: solo lecturas (`git log/show`, `gitleaks`, `npm view/whoami`,
-  `gh api` GET, lecturas de archivo). Prohibido: `git push`, `npm publish`, `gh repo create`,
-  y cualquier escritura fuera del propio informe en pantalla.
+- **Read-only salvo la Fase 3 con sus DOS precondiciones**: fuera de ahí, solo lecturas
+  (`git log/show`, `gitleaks`, `npm view/whoami`, `gh api` GET). Prohibido siempre:
+  `npm publish`, tocar el marketplace, y cualquier escritura no confirmada.
 - **Jamás un verde falso**: check que no corrió = rojo; duda = rojo; secreto redactado en
   el informe pero NUNCA impreso completo.
-- **El silencio no es aprobación** (heredado de /orquestar) — y en esta versión ni siquiera
-  hay qué aprobar: no existe ejecución.
+- **El silencio no es aprobación** (heredado de /orquestar): sin confirmación explícita,
+  el informe es el único producto de la corrida.
