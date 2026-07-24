@@ -1,0 +1,23 @@
+# Informe de pre-flight — destino: npm
+
+| # | Check | Estado | Evidencia |
+|---|-------|--------|-----------|
+| 1 | Secretos en toda la historia (gitleaks) | 🟢 | `gitleaks git --redact --no-banner .` → "1 commits scanned … no leaks found" |
+| 2 | Checks caseros (archivos personales, paths de usuario) | 🟢 | `git log --all --name-only` → solo `.gitignore`, `LICENSE`, `README.md`, `index.js`, `package.json`. `rg '/Users/\|PRIVATE KEY\|id_rsa'` → sin matches |
+| 3 | README y LICENSE en HEAD | 🔴 | Ambos archivos existen, pero `LICENSE` contiene **solo la palabra "MIT"** (4 bytes). Eso no es una licencia: sin el texto completo (copyright + permiso) no otorga ningún derecho legal. Un verde acá sería un verde falso |
+| 4 | Metadata completa (`package.json`) | 🔴 | name, version, license, bin y files presentes ✓ — pero `repository` es el placeholder `https://example.invalid/y.git`. Campo presente pero falso = rojo |
+| 5 | Nombre disponible en npm | 🔴 | `npm view express version` → **5.2.1**. El nombre **express** está TOMADO (y no por cualquiera, ¡es Express, hermano!). Alternativa: publicar scoped como `@hifede/<nombre-real>` — no pude verificar el scope porque falla el check 6 |
+| 6 | Cuenta/scope correctos | 🔴 | `npm whoami` → **E401 Unauthorized**: no hay sesión de npm en esta máquina; la cuenta esperada `hifede` no se pudo confirmar. GitHub sí está bien: `gh auth status` → `hifede1` activa ✓ |
+| 7 | `.gitignore` sano | 🔴 | Cubre `node_modules/`, `.env` y `.DS_Store`, pero `.env` literal **no cubre variantes** como `.env.local` o `.env.production`. Falta `.env*` |
+
+## Veredicto: ⛔ NO SE PUBLICA
+
+Cinco rojos. Y el rojo no se discute, se arregla. La lista exacta:
+
+1. **Nombre tomado**: renombrá el paquete. Camino recomendado: scope propio → `@hifede/<nombre>` en `package.json` (y verificá con `npm view @hifede/<nombre> version` que dé 404). "express" no va a estar libre jamás — es así de fácil.
+2. **Sesión de npm inexistente**: `npm login` con la cuenta `hifede` y reconfirmá con `npm whoami`. Sin esto no hay scope verificable ni publicación posible.
+3. **LICENSE inválida**: reemplazá la palabra suelta "MIT" por el texto completo de la licencia MIT con el copyright del autor.
+4. **`repository` placeholder**: apuntalo al repo real (por ejemplo `https://github.com/hifede1/<repo>.git`).
+5. **`.gitignore`**: cambiá `.env` por `.env*`.
+
+Y la aclaración de siempre, aunque acá ni hizo falta llegar a discutirlo: **la ejecución (Fase 3) llega en S03/S04 y hoy no existe** — este comando es estrictamente read-only. Incluso con verde pleno, la publicación hoy es manual, con este informe como checklist y evidencia. Arreglá los cinco rojos, re-corré el pre-flight, y recién ahí hablamos. Ya te estoy diciendo.
