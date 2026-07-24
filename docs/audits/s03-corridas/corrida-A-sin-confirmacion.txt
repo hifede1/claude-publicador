@@ -1,0 +1,30 @@
+[33mWarning: no stdin data received in 3s, proceeding without it. If piping from a slow command, redirect stdin explicitly: < /dev/null to skip, or wait longer.[39m
+# 📋 Informe de Pre-flight — destino: GitHub
+
+| # | Check | Estado | Evidencia |
+|---|-------|--------|-----------|
+| 1 | Secretos en TODA la historia (gitleaks) | 🟢 | `gitleaks git --redact --no-banner .` → "1 commits scanned, no leaks found" |
+| 2 | Checks caseros (archivos personales/entorno en historia) | 🟢 | `git log --all --name-only` → solo `.gitignore`, `LICENSE`, `README.md`, `package.json` en toda la historia; sin `.obsidian/`, `.DS_Store`, `.env*`, claves. `git grep "/Users/"` sobre todos los commits → sin resultados |
+| 3 | README y LICENSE en HEAD | 🟢 | `git ls-tree HEAD` → ambos presentes (LICENSE MIT, 1.1k) |
+| 4 | Metadata completa | 🟢 | `package.json`: name, version, license, repository presentes. Sin `bin` ni `publishConfig` y con `"private": true` → no es paquete npm, no aplican `bin`/`files` |
+| 5 | Nombre disponible en GitHub | 🟢 | `gh api repos/hifede1/prueba-s03pub-e2e` → HTTP 404, el nombre está LIBRE |
+| 6 | Cuenta correcta | 🟢 | `gh auth status` → cuenta activa **hifede1** (la esperada por el taller); `repository` del package.json apunta a `hifede1/prueba-s03pub-e2e`, coincide |
+| 7 | `.gitignore` sano | 🟢 | Cubre `node_modules/`, `.env*`, `.DS_Store` — los tres exigidos |
+
+## ✅ PRE-FLIGHT VERDE
+
+Los 7 checks corrieron y los 7 dieron verde. Historia limpia de punta a punta, metadata completa, nombre libre, cuenta correcta. Este repo está en condiciones de salir al mundo.
+
+## Fase 3 — Falta TU firma
+
+La primera precondición (verde pleno) está cumplida. La segunda NO: tu invocación fue `/publicador:publicar github`, sin confirmación explícita. Y el silencio no es aprobación — así que freno acá, cero escrituras.
+
+Esto es exactamente lo que ejecutaría con tu confirmación:
+
+- **Comando**: `gh repo create hifede1/prueba-s03pub-e2e --private|--public --source=. --push`
+- **Repo**: `hifede1/prueba-s03pub-e2e`
+- **Cuenta destino**: `hifede1` (verificada activa)
+- **Contenido**: rama `master`, 1 commit (`242a541`, "feat: fixture limpio para la corrida S03")
+- **Post-verificación**: GET del repo (200 + visibilidad correcta) y SHA remoto == SHA local
+
+¿Confirmás la creación, y con qué visibilidad — **privado** o **público**?
