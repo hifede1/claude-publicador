@@ -2,7 +2,7 @@
   "schema_version": "1.0",
   "proyecto": "claude-publicador",
   "last_audit": "2026-07-24",
-  "closed_count": 3,
+  "closed_count": 4,
   "calibracion": {
     "unidad": "sesiones (~2-4h), talla S/M/L",
     "actores": "Fede + una máquina (esta)",
@@ -38,15 +38,9 @@
       "id": "p04",
       "nombre": "Ejecución npm + marketplace (S04)",
       "zona": "El producto — pre-flight y ejecución",
-      "estado": "pend",
-      "resumen": "Las otras dos salidas firmadas (registries v1). Criterios 3 y 4 completos. Sin obra.",
-      "pendientes": [
-        {
-          "id": "p-exec-npm",
-          "txt": "Publicación npm de prueba + marketplace, end-to-end con post-verificación",
-          "sesion": "S04"
-        }
-      ]
+      "estado": "hecho",
+      "resumen": "CERRADA S04: E2E npm con dist.shasum verificado; 2FA del dueño como segunda muralla; marketplace con firma del dueño.",
+      "pendientes": []
     },
     {
       "id": "p05",
@@ -65,17 +59,6 @@
   ],
   "plan": [
     {
-      "sesion": "S04",
-      "titulo": "Ejecución npm/marketplace: publish + post-verificación",
-      "estimacion": 1,
-      "deps": [
-        "S03"
-      ],
-      "cierra": [
-        "p-exec-npm"
-      ]
-    },
-    {
       "sesion": "S05",
       "titulo": "Dogfooding final: publicarse a sí mismo",
       "estimacion": 1,
@@ -91,8 +74,8 @@
   "referencias": [],
   "referencias_faltantes": [],
   "deuda": [
-    "npm/marketplace sin ejecución: S04 (npm login pendiente en la máquina) y S05 cierran el plan",
-    "Delegación gitleaks (batuta/010): delegado CAPAZ — se salda en S05 corriendo sobre los repos reales",
+    "Queda S05 (dogfooding): /publicar sobre su propio repo + saldo formal de gitleaks (batuta/010) sobre la flota",
+    "Cuenta npm hifede con 2FA auth-and-writes: todo publish/unpublish exige OTP del dueño (rasgo, no bug)",
     "Nació publicado a mano (S05 lo re-verifica)",
     "Registro de verificación firmado 2026-07-24: docs/verificacion/criterios-clasificados.md (4 criterios clasificados por el dueño)"
   ]
